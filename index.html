@@ -128,6 +128,7 @@
             border: 2px solid var(--primary-color);
             box-shadow: var(--glow);
             animation: logoGlow 2s ease-in-out infinite alternate;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
         }
 
         @keyframes logoGlow {
@@ -549,7 +550,27 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* QR Code Styling */
+        #qrcode canvas {
+            border-radius: 10px;
+            box-shadow: var(--glow);
+        }
+
+        /* Success Message */
+        .success-message {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
     </style>
+    
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 </head>
 <body>
     <!-- Cyber Particles -->
@@ -559,7 +580,7 @@
     <header class="header">
         <div class="container">
             <div class="logo-container">
-                <img src="logo.png" alt="QEO vCard Export Logo" class="logo">
+                <div class="logo"></div>
                 <h1 class="title">QEO vCard Export</h1>
             </div>
             <p class="subtitle">Generator vCard Profesional dengan Template Modern & Fitur Canggih</p>
@@ -750,9 +771,15 @@
     </footer>
 
     <script>
+        // Global variables
+        let currentVCardData = null;
+        let currentQRCode = null;
+
         // Create cyber particles
         function createParticles() {
             const container = document.getElementById('particles');
+            container.innerHTML = ''; // Clear existing particles
+            
             for (let i = 0; i < 50; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
@@ -764,24 +791,32 @@
         }
 
         // Template selection
-        document.querySelectorAll('.template-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-                updatePreview();
+        function initializeTemplateSelection() {
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    updatePreview();
+                });
             });
-        });
+        }
 
         // Color picker updates
-        document.getElementById('primaryColor').addEventListener('input', updatePreview);
-        document.getElementById('secondaryColor').addEventListener('input', updatePreview);
-        document.getElementById('bgColor').addEventListener('input', updatePreview);
+        function initializeColorPickers() {
+            document.getElementById('primaryColor').addEventListener('input', updatePreview);
+            document.getElementById('secondaryColor').addEventListener('input', updatePreview);
+            document.getElementById('bgColor').addEventListener('input', updatePreview);
+        }
 
         // Form input updates
-        document.querySelectorAll('#vcardForm input, #vcardForm textarea').forEach(input => {
-            input.addEventListener('input', updatePreview);
-        });
+        function initializeFormInputs() {
+            document.querySelectorAll('#vcardForm input, #vcardForm textarea, #cardSize').forEach(input => {
+                input.addEventListener('input', updatePreview);
+                input.addEventListener('change', updatePreview);
+            });
+        }
 
+        // Update preview function
         function updatePreview() {
             const fullName = document.getElementById('fullName').value || 'John Doe';
             const jobTitle = document.getElementById('jobTitle').value || 'CEO & Founder';
@@ -791,7 +826,7 @@
             const website = document.getElementById('website').value || 'https://example.com';
             const address = document.getElementById('address').value || 'Jl. Contoh No. 123\nJakarta, Indonesia';
 
-            // Update preview
+            // Update preview elements
             document.getElementById('previewName').textContent = fullName;
             document.getElementById('previewJob').textContent = jobTitle;
             document.getElementById('previewCompany').textContent = company;
@@ -800,25 +835,350 @@
             document.getElementById('previewWebsite').textContent = website;
             document.getElementById('previewAddress').innerHTML = address.replace(/\n/g, '<br>');
             
-            // Update avatar
-            const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+            // Update avatar initials
+            const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase() || 'JD';
             document.getElementById('previewAvatar').textContent = initials;
 
-            // Apply custom colors
+            // Apply custom colors to CSS variables
             const primaryColor = document.getElementById('primaryColor').value;
             const secondaryColor = document.getElementById('secondaryColor').value;
             const bgColor = document.getElementById('bgColor').value;
             
             document.documentElement.style.setProperty('--primary-color', primaryColor);
             document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+            
+            // Update QR Code if data has changed
+            updateQRCode();
         }
 
+        // Generate vCard data
+        function generateVCardData() {
+            const fullName = document.getElementById('fullName').value || '';
+            const jobTitle = document.getElementById('jobTitle').value || '';
+            const company = document.getElementById('company').value || '';
+            const phone = document.getElementById('phone').value || '';
+            const email = document.getElementById('email').value || '';
+            const website = document.getElementById('website').value || '';
+            const address = document.getElementById('address').value || '';
+            const notes = document.getElementById('notes').value || '';
+
+            // Generate vCard format string
+            let vCardData = 'BEGIN:VCARD\n';
+            vCardData += 'VERSION:3.0\n';
+            vCardData += `FN:${fullName}\n`;
+            
+            if (fullName) {
+                const nameParts = fullName.split(' ');
+                const lastName = nameParts.pop() || '';
+                const firstName = nameParts.join(' ') || '';
+                vCardData += `N:${lastName};${firstName};;;\n`;
+            }
+            
+            if (jobTitle) vCardData += `TITLE:${jobTitle}\n`;
+            if (company) vCardData += `ORG:${company}\n`;
+            if (phone) vCardData += `TEL:${phone}\n`;
+            if (email) vCardData += `EMAIL:${email}\n`;
+            if (website) vCardData += `URL:${website}\n`;
+            if (address) vCardData += `ADR:;;${address.replace(/\n/g, ' ')};;;;\n`;
+            if (notes) vCardData += `NOTE:${notes}\n`;
+            
+            vCardData += 'END:VCARD';
+            
+            return vCardData;
+        }
+
+        // Update QR Code
+        function updateQRCode() {
+            const qrContainer = document.getElementById('qrcode');
+            const vCardData = generateVCardData();
+            
+            // Clear existing QR code
+            qrContainer.innerHTML = '';
+            
+            // Generate new QR code
+            if (typeof QRCode !== 'undefined') {
+                try {
+                    currentQRCode = new QRCode(qrContainer, {
+                        text: vCardData,
+                        width: 200,
+                        height: 200,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                } catch (error) {
+                    console.error('Error generating QR code:', error);
+                    qrContainer.innerHTML = '<div style="width: 200px; height: 200px; background: rgba(255,255,255,0.9); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #000;">QR Code Error</div>';
+                }
+            } else {
+                qrContainer.innerHTML = '<div style="width: 200px; height: 200px; background: rgba(255,255,255,0.9); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #000;">QR Code akan muncul di sini</div>';
+            }
+        }
+
+        // Generate vCard function
         function generateVCard() {
             const generateText = document.getElementById('generateText');
             const generateLoading = document.getElementById('generateLoading');
             
+            // Show loading
             generateText.style.display = 'none';
             generateLoading.style.display = 'inline-block';
 
+            // Validate required fields
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            
+            if (!fullName || !email) {
+                alert('Mohon isi field yang wajib diisi: Nama Lengkap dan Email');
+                generateText.style.display = 'inline';
+                generateLoading.style.display = 'none';
+                return;
+            }
+
             // Simulate generation process
-            setTimeout(() =>
+            setTimeout(() => {
+                try {
+                    // Generate vCard data
+                    currentVCardData = generateVCardData();
+                    
+                    // Update QR Code
+                    updateQRCode();
+                    
+                    // Show success message
+                    showSuccessMessage('vCard berhasil dibuat! Anda dapat mendownload atau membagikannya.');
+                    
+                } catch (error) {
+                    console.error('Error generating vCard:', error);
+                    alert('Terjadi kesalahan saat membuat vCard. Silakan coba lagi.');
+                } finally {
+                    // Hide loading
+                    generateText.style.display = 'inline';
+                    generateLoading.style.display = 'none';
+                }
+            }, 1500);
+        }
+
+        // Download vCard function
+        function downloadVCard() {
+            if (!currentVCardData) {
+                alert('Silakan generate vCard terlebih dahulu');
+                return;
+            }
+            
+            const fullName = document.getElementById('fullName').value || 'contact';
+            const fileName = `${fullName.replace(/\s+/g, '_').toLowerCase()}_vcard.vcf`;
+            
+            try {
+                const blob = new Blob([currentVCardData], { type: 'text/vcard;charset=utf-8' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                
+                showSuccessMessage('vCard berhasil diunduh!');
+            } catch (error) {
+                console.error('Error downloading vCard:', error);
+                alert('Terjadi kesalahan saat mengunduh vCard.');
+            }
+        }
+
+        // Download QR Code function
+        function downloadQR() {
+            if (!currentQRCode) {
+                alert('Silakan generate vCard terlebih dahulu untuk membuat QR Code');
+                return;
+            }
+            
+            try {
+                const canvas = document.querySelector('#qrcode canvas');
+                if (canvas) {
+                    const fullName = document.getElementById('fullName').value || 'contact';
+                    const fileName = `${fullName.replace(/\s+/g, '_').toLowerCase()}_qrcode.png`;
+                    
+                    const link = document.createElement('a');
+                    link.download = fileName;
+                    link.href = canvas.toDataURL();
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    showSuccessMessage('QR Code berhasil diunduh!');
+                } else {
+                    alert('QR Code belum tersedia untuk diunduh');
+                }
+            } catch (error) {
+                console.error('Error downloading QR code:', error);
+                alert('Terjadi kesalahan saat mengunduh QR Code.');
+            }
+        }
+
+        // Share vCard function
+        function shareVCard() {
+            if (!currentVCardData) {
+                alert('Silakan generate vCard terlebih dahulu');
+                return;
+            }
+            
+            const fullName = document.getElementById('fullName').value || 'Kontak';
+            const company = document.getElementById('company').value || '';
+            const shareText = `Kontak vCard untuk ${fullName}${company ? ' dari ' + company : ''}`;
+            
+            // Check if Web Share API is supported
+            if (navigator.share) {
+                try {
+                    // Create a blob and file for sharing
+                    const blob = new Blob([currentVCardData], { type: 'text/vcard' });
+                    const fileName = `${fullName.replace(/\s+/g, '_').toLowerCase()}_vcard.vcf`;
+                    const file = new File([blob], fileName, { type: 'text/vcard' });
+                    
+                    navigator.share({
+                        title: 'vCard - ' + fullName,
+                        text: shareText,
+                        files: [file]
+                    });
+                } catch (error) {
+                    console.error('Error sharing vCard:', error);
+                    fallbackShare(shareText);
+                }
+            } else {
+                fallbackShare(shareText);
+            }
+        }
+
+        // Fallback share function
+        function fallbackShare(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(currentVCardData).then(() => {
+                    showSuccessMessage('Data vCard telah disalin ke clipboard!');
+                }).catch(() => {
+                    promptManualCopy(text);
+                });
+            } else {
+                promptManualCopy(text);
+            }
+        }
+
+        // Prompt manual copy
+        function promptManualCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = currentVCardData;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showSuccessMessage('Data vCard telah disalin! Anda dapat paste di aplikasi lain.');
+            } catch (error) {
+                alert('Tidak dapat menyalin secara otomatis. Silakan copy manual data vCard dari console.');
+                console.log('vCard Data:', currentVCardData);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // Show success message
+        function showSuccessMessage(message) {
+            // Remove existing success messages
+            const existingMessages = document.querySelectorAll('.success-message');
+            existingMessages.forEach(msg => msg.remove());
+            
+            // Create new success message
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            
+            // Insert after form section
+            const formSection = document.querySelector('.form-section');
+            formSection.parentNode.insertBefore(successDiv, formSection.nextSibling);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (successDiv.parentNode) {
+                    successDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Apply template styles
+        function applyTemplate(templateName) {
+            const preview = document.querySelector('.vcard-preview');
+            const avatar = document.getElementById('previewAvatar');
+            
+            // Reset classes
+            preview.className = 'vcard-preview';
+            
+            switch (templateName) {
+                case 'classic':
+                    preview.style.background = 'rgba(255, 255, 255, 0.95)';
+                    preview.style.color = '#333';
+                    break;
+                case 'modern':
+                    preview.style.background = 'rgba(26, 26, 26, 0.95)';
+                    preview.style.color = '#fff';
+                    break;
+                case 'neon':
+                    preview.style.background = 'rgba(0, 26, 51, 0.95)';
+                    preview.style.color = '#00ffff';
+                    break;
+                case 'gradient':
+                    preview.style.background = 'linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9))';
+                    preview.style.color = '#fff';
+                    break;
+            }
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create particles
+            createParticles();
+            
+            // Initialize event listeners
+            initializeTemplateSelection();
+            initializeColorPickers();
+            initializeFormInputs();
+            
+            // Initial preview update
+            updatePreview();
+            
+            // Add template change listener
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const templateName = this.getAttribute('data-template');
+                    applyTemplate(templateName);
+                });
+            });
+            
+            console.log('QEO vCard Export initialized successfully!');
+        });
+
+        // Handle window resize for responsive particles
+        window.addEventListener('resize', function() {
+            createParticles();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 'g':
+                        e.preventDefault();
+                        generateVCard();
+                        break;
+                    case 'd':
+                        e.preventDefault();
+                        downloadVCard();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        shareVCard();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
