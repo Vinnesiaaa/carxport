@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QEO vCard Export - Generator vCard Profesional Online</title>
+    <meta name="description" content="QEO vCard Export - Generator vCard profesional dengan template modern, ekspor multiple format, dan fitur canggih untuk digital business card">
+    <meta name="keywords" content="vcard generator, digital business card, vcard export, electronic business card, contact card generator, professional vcard, vcard template">
+    <meta name="author" content="QEO vCard Export">
+    <meta property="og:title" content="QEO vCard Export - Generator vCard Profesional">
+    <meta property="og:description" content="Buat vCard profesional dengan template modern dan fitur lengkap">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://vcard.qeo.qzz.io">
+    <link rel="canonical" href="https://vcard.qeo.qzz.io">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00ff00;
+            --secondary-color: #0099ff;
+            --accent-color: #ff0099;
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050508;
+            --text-light: #ffffff;
+            --text-gray: #888;
+            --grid-color: rgba(0, 255, 0, 0.1);
+            --glow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Matrix Grid Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -2;
+            animation: matrixGrid 20s linear infinite;
+        }
+
+        @keyframes matrixGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Cyber particles */
+        .cyber-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+            box-shadow: var(--glow);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        .header {
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(0,20,40,0.6));
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,255,0,0.2);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-color);
+            box-shadow: var(--glow);
+            animation: logoGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            0% { box-shadow: 0 0 20px rgba(0,255,0,0.3); }
+            100% { box-shadow: 0 0 40px rgba(0,255,0,0.8), 0 0 60px rgba(0,255,0,0.4); }
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: typewriter 3s steps(40) 1s both;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 3px solid var(--primary-color);
+        }
+
+        @keyframes typewriter {
+            0% { width: 0; }
+            99% { border-right: 3px solid var(--primary-color); }
+            100% { 
+                width: 100%; 
+                border-right: transparent;
+            }
+        }
+
+        .subtitle {
+            color: var(--text-gray);
+            margin-top: 0.5rem;
+            animation: fadeInUp 1s ease-out 2s both;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            padding: 3rem 0;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            border-radius: 15px;
+            z-index: -1;
+            animation: borderGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes borderGlow {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 2px;
+            background: var(--primary-color);
+            margin: 0.5rem auto;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+            transform: translateZ(0);
+        }
+
+        /* Template Selection */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .template-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,0,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .template-card:hover::before {
+            left: 100%;
+        }
+
+        .template-card:hover,
+        .template-card.active {
+            border-color: var(--primary-color);
+            transform: translateY(-5px) translateZ(0);
+            box-shadow: var(--glow);
+        }
+
+        .template-preview {
+            width: 60px;
+            height: 40px;
+            margin: 0 auto 0.5rem;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .template-classic { background: linear-gradient(135deg, #ffffff, #f0f0f0); }
+        .template-modern { background: linear-gradient(135deg, #1a1a1a, #333); }
+        .template-neon { background: linear-gradient(135deg, #000, #001a33); }
+        .template-gradient { background: linear-gradient(135deg, #667eea, #764ba2); }
+
+        /* Color Picker */
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+        }
+
+        .color-option {
+            position: relative;
+        }
+
+        .color-option input[type="color"] {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .color-option input[type="color"]:hover {
+            transform: scale(1.1) translateZ(0);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px) translateZ(0);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Preview Section */
+        .preview-section {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .vcard-preview {
+            background: rgba(10, 10, 15, 0.9);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(10px);
+            animation: previewFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes previewFloat {
+            0%, 100% { transform: translateY(0) translateZ(0); }
+            50% { transform: translateY(-10px) translateZ(0); }
+        }
+
+        .vcard-content {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .vcard-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: avatarGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes avatarGlow {
+            0% { box-shadow: 0 0 20px rgba(0,255,0,0.3); }
+            100% { box-shadow: 0 0 40px rgba(0,255,0,0.8); }
+        }
+
+        /* Features Section */
+        .features-section {
+            margin: 4rem 0;
+            text-align: center;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(10, 10, 15, 0.6);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0,255,0,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) translateZ(0);
+            box-shadow: var(--glow);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(5, 5, 8, 0.9);
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(0, 255, 0, 0.2);
+            margin-top: 4rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .template-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .color-picker-group {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0,255,0,0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cyber Particles -->
+    <div class="cyber-particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo-container">
+                <img src="logo.png" alt="QEO vCard Export Logo" class="logo">
+                <h1 class="title">QEO vCard Export</h1>
+            </div>
+            <p class="subtitle">Generator vCard Profesional dengan Template Modern & Fitur Canggih</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="main-content">
+            <!-- Form Section -->
+            <div class="form-section fade-in">
+                <h2 class="section-title">Informasi Kontak</h2>
+                
+                <form id="vcardForm">
+                    <div class="form-group">
+                        <label for="fullName">Nama Lengkap *</label>
+                        <input type="text" id="fullName" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jobTitle">Jabatan</label>
+                        <input type="text" id="jobTitle" placeholder="CEO & Founder">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company">Perusahaan</label>
+                        <input type="text" id="company" placeholder="Tech Innovators Inc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Nomor Telepon</label>
+                        <input type="tel" id="phone" placeholder="+62 812 3456 7890">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" placeholder="john@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="website">Website</label>
+                        <input type="url" id="website" placeholder="https://example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Alamat</label>
+                        <textarea id="address" rows="3" placeholder="Jl. Contoh No. 123, Jakarta, Indonesia"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Catatan</label>
+                        <textarea id="notes" rows="2" placeholder="Informasi tambahan..."></textarea>
+                    </div>
+                </form>
+
+                <h3 class="section-title">Template vCard</h3>
+                <div class="template-grid">
+                    <div class="template-card active" data-template="classic">
+                        <div class="template-preview template-classic"></div>
+                        <div>Classic</div>
+                    </div>
+                    <div class="template-card" data-template="modern">
+                        <div class="template-preview template-modern"></div>
+                        <div>Modern</div>
+                    </div>
+                    <div class="template-card" data-template="neon">
+                        <div class="template-preview template-neon"></div>
+                        <div>Neon</div>
+                    </div>
+                    <div class="template-card" data-template="gradient">
+                        <div class="template-preview template-gradient"></div>
+                        <div>Gradient</div>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Kustomisasi Warna</h3>
+                <div class="color-picker-group">
+                    <div class="color-option">
+                        <label>Primary</label>
+                        <input type="color" id="primaryColor" value="#00ff00">
+                    </div>
+                    <div class="color-option">
+                        <label>Secondary</label>
+                        <input type="color" id="secondaryColor" value="#0099ff">
+                    </div>
+                    <div class="color-option">
+                        <label>Background</label>
+                        <input type="color" id="bgColor" value="#1a1a1a">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardSize">Ukuran Kartu</label>
+                    <select id="cardSize">
+                        <option value="standard">Standard (85x55mm)</option>
+                        <option value="large">Large (100x65mm)</option>
+                        <option value="compact">Compact (70x45mm)</option>
+                        <option value="square">Square (75x75mm)</option>
+                    </select>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn" onclick="generateVCard()">
+                        <span id="generateText">Generate vCard</span>
+                        <span id="generateLoading" class="loading" style="display: none;"></span>
+                    </button>
+                    <button type="button" class="btn" onclick="downloadVCard()">Download VCF</button>
+                    <button type="button" class="btn" onclick="shareVCard()">Share</button>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section fade-in">
+                <div class="vcard-preview">
+                    <h2 class="section-title">Preview vCard</h2>
+                    <div class="vcard-content" id="vcardPreview">
+                        <div class="vcard-avatar" id="previewAvatar">JD</div>
+                        <h3 id="previewName">John Doe</h3>
+                        <p id="previewJob">CEO & Founder</p>
+                        <p id="previewCompany">Tech Innovators Inc.</p>
+                        <hr style="margin: 1rem 0; border-color: var(--primary-color);">
+                        <p id="previewPhone">+62 812 3456 7890</p>
+                        <p id="previewEmail">john@example.com</p>
+                        <p id="previewWebsite">https://example.com</p>
+                        <p id="previewAddress" style="font-size: 0.9em; margin-top: 1rem;">
+                            Jl. Contoh No. 123<br>Jakarta, Indonesia
+                        </p>
+                    </div>
+                </div>
+
+                <!-- QR Code Section -->
+                <div class="vcard-preview" style="margin-top: 2rem;">
+                    <h3 class="section-title">QR Code</h3>
+                    <div id="qrcode" style="display: flex; justify-content: center; margin: 1rem 0;">
+                        <div style="width: 200px; height: 200px; background: rgba(255,255,255,0.9); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #000;">
+                            QR Code akan muncul di sini
+                        </div>
+                    </div>
+                    <button type="button" class="btn" onclick="downloadQR()">Download QR Code</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2 class="section-title" style="font-size: 2.5rem;">Fitur Unggulan</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Template Modern</h3>
+                    <p>Berbagai template profesional yang dapat disesuaikan dengan brand identity Anda</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Kustomisasi Penuh</h3>
+                    <p>Ubah warna, ukuran, dan layout sesuai preferensi dengan kontrol yang mudah</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>QR Code Generator</h3>
+                    <p>QR code otomatis untuk memudahkan sharing kontak digital ke smartphone</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Multiple Export</h3>
+                    <p>Export ke format VCF, PNG, PDF, dan berbagai format lainnya</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-time Preview</h3>
+                    <p>Lihat perubahan secara langsung dengan preview real-time yang responsif</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Social Media Links</h3>
+                    <p>Integrasikan link media sosial dan platform digital lainnya</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 QEO vCard Export. All rights reserved.</p>
+            <p>Powered by Modern Web Technology</p>
+        </div>
+    </footer>
+
+    <script>
+        // Create cyber particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Template selection
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                updatePreview();
+            });
+        });
+
+        // Color picker updates
+        document.getElementById('primaryColor').addEventListener('input', updatePreview);
+        document.getElementById('secondaryColor').addEventListener('input', updatePreview);
+        document.getElementById('bgColor').addEventListener('input', updatePreview);
+
+        // Form input updates
+        document.querySelectorAll('#vcardForm input, #vcardForm textarea').forEach(input => {
+            input.addEventListener('input', updatePreview);
+        });
+
+        function updatePreview() {
+            const fullName = document.getElementById('fullName').value || 'John Doe';
+            const jobTitle = document.getElementById('jobTitle').value || 'CEO & Founder';
+            const company = document.getElementById('company').value || 'Tech Innovators Inc.';
+            const phone = document.getElementById('phone').value || '+62 812 3456 7890';
+            const email = document.getElementById('email').value || 'john@example.com';
+            const website = document.getElementById('website').value || 'https://example.com';
+            const address = document.getElementById('address').value || 'Jl. Contoh No. 123\nJakarta, Indonesia';
+
+            // Update preview
+            document.getElementById('previewName').textContent = fullName;
+            document.getElementById('previewJob').textContent = jobTitle;
+            document.getElementById('previewCompany').textContent = company;
+            document.getElementById('previewPhone').textContent = phone;
+            document.getElementById('previewEmail').textContent = email;
+            document.getElementById('previewWebsite').textContent = website;
+            document.getElementById('previewAddress').innerHTML = address.replace(/\n/g, '<br>');
+            
+            // Update avatar
+            const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('previewAvatar').textContent = initials;
+
+            // Apply custom colors
+            const primaryColor = document.getElementById('primaryColor').value;
+            const secondaryColor = document.getElementById('secondaryColor').value;
+            const bgColor = document.getElementById('bgColor').value;
+            
+            document.documentElement.style.setProperty('--primary-color', primaryColor);
+            document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+        }
+
+        function generateVCard() {
+            const generateText = document.getElementById('generateText');
+            const generateLoading = document.getElementById('generateLoading');
+            
+            generateText.style.display = 'none';
+            generateLoading.style.display = 'inline-block';
+
+            // Simulate generation process
+            setTimeout(() =>
