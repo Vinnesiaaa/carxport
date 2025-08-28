@@ -1531,14 +1531,14 @@
             
             if (typeof QRCode !== 'undefined') {
                 try {
-                    currentQRCode = new QRCode(qrContainer, {
-                        text: vCardData,
-                        width: size,
-                        height: size,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
-                    });
+                    const qrCode = new QRCodeStyling({
+                      width: size,
+                      height: size,
+                      data: vCardData,
+                      dotsOptions: { color: "#000000", type: "rounded" },
+                     backgroundOptions: { color: "#ffffff" },
+                        });
+                    qrCode.append(qrContainer);
                     
                     // Enable QR download buttons
                     document.getElementById('downloadQrBtn').disabled = false;
